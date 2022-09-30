@@ -5,8 +5,10 @@ import {
   useSetRecoilState,
   useResetRecoilState,
 } from "recoil";
+import styled from "styled-components";
 import {
   CommonCounterState,
+  recoilCounterSelector,
   recoilCounterState,
 } from "../states/recoilCounterState";
 
@@ -19,7 +21,9 @@ function RecoilCounter() {
    * useResetRecoilState : atom 상태를 디폴트 상태로 reset
    *
    */
-  const [recoilCounter, setRecoilCounter] = useRecoilState(recoilCounterState);
+  const [recoilCounter, setRecoilCounter] = useRecoilState(
+    recoilCounterSelector
+  );
   const recoilValue = useRecoilValue(recoilCounterState);
   const setCounter = useSetRecoilState(recoilCounterState);
   const resetCounter = useResetRecoilState(recoilCounterState);
@@ -37,12 +41,43 @@ function RecoilCounter() {
   }, [recoilCounter]);
 
   return (
-    <div className="counter-container">
-      <h1>{recoilCounter.value}</h1>
-      <button onClick={onIncrease}>+</button>
-      <button onClick={onDecrease}>-</button>
-    </div>
+    <CounterContainer>
+      <CounterP>I'm Counter : {recoilCounter.value}</CounterP>
+      <ButtonContainer>
+        <Button onClick={onIncrease}>+</Button>
+        <Button onClick={onDecrease}>-</Button>
+      </ButtonContainer>
+    </CounterContainer>
   );
 }
 
 export default RecoilCounter;
+
+const CounterContainer = styled.div`
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+`;
+
+const ButtonContainer = styled.div``;
+
+const CounterP = styled.p`
+  font-size: 2.5rem;
+  font-weight: bold;
+`;
+const Button = styled.button`
+  width: 50px;
+  height: 50px;
+  font-size: 2rem;
+  color: white;
+  background-color: blue;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-right: 5px;
+  &:active {
+    transform: scale(1.5);
+  }
+`;

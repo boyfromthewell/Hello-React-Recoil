@@ -18,3 +18,13 @@ export const recoilTodoState = atom({
     key: 'recoilTodoState',
     default: initialState
 })
+
+export const recoildTodoSelector = selector({
+    key: 'recoilTodoSelector',
+    get: ({get}) => {
+        return get(recoilTodoState);
+    },
+    set: ({set}, value)=>{
+        set(recoilTodoState, value);
+    }
+})

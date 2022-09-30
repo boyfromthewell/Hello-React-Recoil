@@ -2,12 +2,13 @@ import React, { useState, useCallback, ChangeEvent, FormEvent } from "react";
 import { useRecoilState } from "recoil";
 import {
   CommonTodoState,
+  recoildTodoSelector,
   recoilTodoState,
   TodoItem,
 } from "../states/recoilTodoState";
 
 function RecoilTodo() {
-  const [recoilTodo, setRecoilTodo] = useRecoilState(recoilTodoState);
+  const [recoilTodo, setRecoilTodo] = useRecoilState(recoildTodoSelector);
   const [inputTitle, setInputTitle] = useState<string>("");
 
   const defaultRecoilTodoState: CommonTodoState = { ...recoilTodo };
@@ -41,6 +42,33 @@ function RecoilTodo() {
     },
     [inputTitle, recoilTodo]
   );
+
+  const onToggle = useCallback(
+    (inputId: number) => {
+      const setTodoList = [...recoilTodo.todoList];
+      const toggleIndex = setTodoList.findIndex((item) => item.id === inputId);
+      const toggleItem = { ...setTodoList[toggleIndex] };
+      console.log(toggleItem);
+
+      toggleItem.checked = !toggleItem.checked;
+      setTodoList[toggleIndex] = { ...toggleItem };
+
+      defaultRecoilTodoState.todoList = setTodoList;
+      setRecoilTodo(defaultRecoilTodoState);
+    },
+    [recoilTodo]
+  );
+
+  const onRemove = useCallback(
+    (inputId: number) => {
+      const setTodoList = [...recoilTodo.todoList];
+      const filterItems = setTodoList.filter((item) => item.id !== inputId);
+
+      defaultRecoilTodoState.todoList = filterItems;
+      setRecoilTodo(defaultRecoilTodoState);
+    },
+    [recoilTodo]
+  );
   return (
     <div>
       <form onSubmit={onSubmit}>
@@ -50,8 +78,18 @@ function RecoilTodo() {
       <div>
         {recoilTodo.todoList.map((item, idx) => (
           <div key={idx}>
-            <input type="checkbox" checked={item.checked} readOnly={true} />
-            <span>{item.title}</span>
+            <input
+              type="checkbox"
+              checked={item.checked}
+              readOnly={true}
+              onClick={() => onToggle(item.id)}
+            />
+            <span
+              style={{ textDecoration: item.checked ? "line-through" : "none" }}
+            >
+              {item.title}
+            </span>
+            <button onClick={() => onRemove(item.id)}>X</button>
           </div>
         ))}
       </div>
