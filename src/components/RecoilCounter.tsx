@@ -59,6 +59,8 @@ const CounterContainer = styled.div`
   align-items: center;
   width: 100%;
   justify-content: space-between;
+  border-bottom: 3px solid lightgray;
+  margin-bottom: 5vh;
 `;
 
 const ButtonContainer = styled.div``;
@@ -78,6 +80,6 @@ const Button = styled.button`
   cursor: pointer;
   margin-right: 5px;
   &:active {
-    transform: scale(1.5);
+    transform: scale(1.2);
   }
 `;
