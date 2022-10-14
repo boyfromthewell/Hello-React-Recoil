@@ -17,8 +17,6 @@ function RecoilTodo() {
 
   const defaultRecoilTodoState: CommonTodoState = { ...recoilTodo };
 
-  console.log(defaultRecoilTodoState.todoList);
-
   const onChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       setInputTitle(e.currentTarget.value);
@@ -36,7 +34,11 @@ function RecoilTodo() {
   const onSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      console.log(inputTitle);
+
+      if (inputTitle.length === 0) {
+        alert("내용을 입력하세요!");
+        return false;
+      }
 
       const insertItem: TodoItem = {
         id: !recoilTodo.todoList.length
@@ -60,7 +62,6 @@ function RecoilTodo() {
       const setTodoList = [...recoilTodo.todoList];
       const toggleIndex = setTodoList.findIndex((item) => item.id === inputId);
       const toggleItem = { ...setTodoList[toggleIndex] };
-      console.log(toggleItem);
 
       toggleItem.checked = !toggleItem.checked;
       setTodoList[toggleIndex] = { ...toggleItem };
@@ -88,6 +89,10 @@ function RecoilTodo() {
   };
 
   const submitModify = (inputId: number) => {
+    if (modifyInputTitle.length === 0) {
+      alert("수정 내용을 입력하세요!");
+      return false;
+    }
     const setTodoList = [...recoilTodo.todoList];
     const toggleIndex = setTodoList.findIndex((item) => item.id === inputId);
     const toggleItem = { ...setTodoList[toggleIndex] };
@@ -105,8 +110,11 @@ function RecoilTodo() {
         <input value={inputTitle} onChange={onChange} />
         <button type="submit">Add Todo!</button>
       </FormContainer>
-
+      {inputTitle.length === 0 ? (
+        <AlertSpan>내용을 입력하세요</AlertSpan>
+      ) : null}
       <TodoList>
+        {recoilTodo.todoList.length ? <h1>My Todo</h1> : null}
         {recoilTodo.todoList.map((item, idx) => (
           <TodoItemContainer key={idx}>
             <TodoListForm>
@@ -123,7 +131,7 @@ function RecoilTodo() {
               >
                 {item.title}
               </span>
-              <div>
+              <div style={{ display: "flex" }}>
                 <ModifyBtn onClick={() => onModifyToggle(item.id)}>
                   수정
                 </ModifyBtn>
@@ -131,10 +139,11 @@ function RecoilTodo() {
               </div>
             </TodoListForm>
             {inputId === item.id && inputToggle ? (
-              <div style={{ display: "flex" }}>
+              <ModifyArea>
                 <input onChange={modifyInput} />
+
                 <button onClick={() => submitModify(item.id)}>OK</button>
-              </div>
+              </ModifyArea>
             ) : null}
           </TodoItemContainer>
         ))}
@@ -203,7 +212,6 @@ const TodoListForm = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1vh;
-
   input {
     width: 30px;
     height: 30px;
@@ -220,6 +228,7 @@ const ModifyBtn = styled.button`
   width: 70px;
   height: 40px;
   font-size: 1rem;
+  font-weight: bold;
   color: white;
   background-color: #59ad95;
   border: none;
@@ -233,6 +242,42 @@ const ModifyBtn = styled.button`
 
 const DelBtn = styled(ModifyBtn)`
   background-color: tomato;
-  width: 30px;
-  height: 30px;
+  width: 35px;
+`;
+
+const ModifyArea = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 10px 0;
+  input {
+    width: 70%;
+    height: 25px;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: gray;
+    border: 1px solid gray;
+    &:focus {
+      outline: 1px solid blue;
+      box-shadow: 0 0 10px;
+    }
+  }
+  button {
+    width: 15%;
+    font-size: 1rem;
+    color: white;
+    background-color: blue;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: 5px;
+    &:active {
+      transform: scale(1.2);
+    }
+  }
+`;
+
+const AlertSpan = styled.span`
+  font-size: 15px;
+  margin-top: 2px;
+  color: red;
 `;
